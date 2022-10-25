@@ -4,15 +4,19 @@ import usersApi from '../apis/usersApi';
 export const usersSlice = createSlice({
     name: "users",
     initialState: {
-        userInfo: {}
+        userInfo: {},
+        title: ''
     },
     reducers: {
         getLoginUser: (state, action) => {
             state.userInfo = action.payload
+        },
+        setTitle: (state, action) => {
+            state.title = action.payload
         }
     }
 })
-export const { getLoginUser } = usersSlice.actions
+export const { getLoginUser, setTitle } = usersSlice.actions
 export default usersSlice.reducer
 export const loginAC = (payload) => async (dispatch) => {
     const data = await usersApi.login(payload)

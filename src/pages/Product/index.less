@@ -1,0 +1,56 @@
+.product {
+    .top {
+        margin: 0px 20px;
+        line-height: 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .left {
+            display: flex;
+            align-items: center;
+            select,
+            input,
+            button {
+                height: 32px;
+                border: 1px solid gray;
+                border-radius: 5px;
+                margin-right: 10px;
+                box-sizing: border-box;
+            }
+
+            select,
+            input::placeholder {
+                padding: 0px 10px;
+            }
+
+            input::placeholder {
+                padding: 10px;
+                color: gray;
+            }
+
+            button {
+                border: none;
+                background-color: #109477;
+                color: white;
+            }
+        }
+
+        .right {
+            button {
+                border: none;
+                background-color: #109477;
+                color: white;
+            }
+        }
+    }
+
+    .border {
+        border-bottom: 1px solid gray;
+    }
+
+    .container {
+        margin: 20px 20px 0px;
+    }
+
+}

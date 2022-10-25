@@ -23,7 +23,7 @@ export default function index() {
         const result = await dispatch(loginAC(values))
         if (!result.status) {
             message.success(`登陆成功，欢迎您，${result.data.username}`)
-            navigate('/home')
+            navigate('/index')
         } else {
             message.error(result.msg)
         }

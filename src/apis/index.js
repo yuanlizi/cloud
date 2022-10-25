@@ -1,3 +1,3 @@
 import usersApi from "./usersApi"
-import systemApi from "./systemApi"
-export default {usersApi, systemApi}
+import categoryApi from "./categoryApi"
+export default {usersApi, categoryApi}

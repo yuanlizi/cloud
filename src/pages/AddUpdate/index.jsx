@@ -13,21 +13,22 @@ export default function index() {
 
     }, [])
     const [fileList, setFileList] = useState([
-        {
-            uid: '-1',  //id
-            name: 'image.png',      //上传文件的名字
-            status: 'done',         //已上传的文件状态
-            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',    //上传后返回的地址
-        },
+        // {
+        //     uid: '-1',  //id
+        //     name: 'image.png',      //上传文件的名字
+        //     status: 'done',         //已上传的文件状态
+        //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',    //上传后返回的地址
+        // },
     ]);
-    const onChange = ({ fileList: newFileList }) => {
-        if (newFileList[newFileList.length - 1].status === 'done') {
+    const onChange = ({file, fileList: newFileList }) => {
+        // console.log('file', file, newFileList);  
+        if (newFileList[newFileList.length - 1]?.status === 'done') {
             if (!newFileList[newFileList.length - 1].response.status) {
                 message.success('图片上传成功')
                 const { data: {name, url} } = newFileList[newFileList.length - 1].response
                 newFileList[newFileList.length - 1].name = name
                 newFileList[newFileList.length - 1].url = url
-                
+                console.log(123123, newFileList);
             } else {
                 message.error('图片上传失败')
             }

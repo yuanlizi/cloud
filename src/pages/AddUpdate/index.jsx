@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Checkbox, Form, Input, Button, Cascader, Upload } from 'antd';
+import { Card, Checkbox, Form, Input, Button, Cascader, Upload, message } from 'antd';
 import { ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons'
 import { getCategoryAC } from '../../store/category'
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,9 +20,20 @@ export default function index() {
             url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',    //上传后返回的地址
         },
     ]);
-    const onChange = ({file, fileList: newFileList }) => {
-        console.log(123, file);
+    const onChange = ({ fileList: newFileList }) => {
+        if (newFileList[newFileList.length - 1].status === 'done') {
+            if (!newFileList[newFileList.length - 1].response.status) {
+                message.success('图片上传成功')
+                const { data: {name, url} } = newFileList[newFileList.length - 1].response
+                newFileList[newFileList.length - 1].name = name
+                newFileList[newFileList.length - 1].url = url
+                
+            } else {
+                message.error('图片上传失败')
+            }
+        } 
         setFileList(newFileList);
+
     };
     const onPreview = async (file) => {
         let src = file.url;

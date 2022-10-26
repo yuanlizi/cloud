@@ -25,5 +25,13 @@ export default {
             method: 'post',
             data
         })
-    }
+    },
+    // 删除图片
+    deleteImg(data) {
+        return axios({
+            url: '/manage/img/delete',
+            method: 'post',
+            data
+        })
+    },
 }

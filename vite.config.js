@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   open: true,
+  define: {global: {}},
   // 代理
   server: {
     proxy: {

@@ -136,7 +136,7 @@ export default function index() {
       <div className='border'></div>
       <div className='container'>
         {
-          !childrenModel ? <Table pagination={{ defaultCurrent: 1, pageSizeOptions: [1, 5, 10], showQuickJumper: true, showSizeChanger: true }} bordered columns={columns} dataSource={categoryList} /> : <Table pagination={{ defaultCurrent: 1, pageSizeOptions: [1, 5, 10], showQuickJumper: true, showSizeChanger: true }} bordered columns={columns} dataSource={categoryList} />
+          !childrenModel ? <Table rowKey='_id' pagination={{ defaultCurrent: 1, pageSizeOptions: [1, 5, 10], showQuickJumper: true, showSizeChanger: true }} bordered columns={columns} dataSource={categoryList} /> : <Table rowKey='_id' pagination={{ defaultCurrent: 1, pageSizeOptions: [1, 5, 10], showQuickJumper: true, showSizeChanger: true }} bordered columns={columns} dataSource={categoryList} />
         }
       </div>
       {/*新增分类 */}

@@ -34,4 +34,43 @@ export default {
             data
         })
     },
+     // 新增商品
+     addProduct(data) {
+        return axios({
+            url: '/manage/product/add',
+            method: 'post',
+            data
+        })
+    },
+     // 修改商品
+     updateProduct(data) {
+        return axios({
+            url: '/manage/product/update',
+            method: 'post',
+            data
+        })
+    },
+     // 获取商品列表
+     getProduct(data) {
+        return axios({
+            url: `/manage/product/list?pageNum=${data.pageNum}&pageSize=${data.pageSize}`,
+            method: 'get',
+        })
+    },
+     // 根据搜索值获取商品列表
+     getSearchProduct(data) {
+        return axios({
+            url: `/manage/product/list?pageNum=${data.pageNum}&pageSize=${data.pageSize}&${data.productName ? `productName=${data.productName}` : `productDesc=${data.productDesc}`}`,
+            method: 'get',
+        })
+    },
+     // 修改商品状态
+     updateStatus(data) {
+        console.log('data', data);
+        return axios({
+            url: '/manage/product/updateStatus',
+            method: 'post',
+            data
+        })
+    },
 }

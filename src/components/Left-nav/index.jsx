@@ -14,7 +14,7 @@ import {
 import { Button, Menu } from 'antd';
 import { useNavigate, useLocation } from 'react-router';
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setTitle } from '../../store/users'
 import logo from '../../assets/images/logo.png'
 const menuList = [
@@ -93,6 +93,32 @@ const index = () => {
         getOpenSub(location.pathname.slice(6))
         useCurrent(location.pathname.slice(6))
     }, [])
+
+    // 筛选导航
+    const permissionsMenu = (menu) => {
+        const roleList = JSON.parse(localStorage.getItem('data')).role.menus
+        let newData = menu.filter(item => {
+            if (!item.children) {
+                let result = roleList.find(item2 => {
+                    return item.key === item2
+                })
+                if (result) {
+                    return item
+                }
+            } else {
+                let result = roleList.find(item2 => {
+                    return item.key === item2
+                })
+                if (result) {
+                    item.children = permissionsMenu(item.children)
+                    return item
+                }
+            }
+
+        })
+        return newData
+
+    }
     // 获得header里面标题
     function getPath(val) {
         const pathname = val

@@ -4,35 +4,60 @@ import { ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux';
 import { createHashHistory } from '@remix-run/router';
 import { deleteImgAC } from '../../store/category'
+import { useNavigate, useLocation } from 'react-router';
 import RichTextEditor from '../../components/RichTextEditor/index'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
-import { getCategoryAC, getCategoryTwoAC } from '../../store/category'
+import { getCategoryAC, getCategoryTwoAC, addProductAC, updateProductAC } from '../../store/category'
 import ImgCrop from 'antd-img-crop';
 const { TextArea } = Input
 const { Option } = Select;
 export default function index() {
+    const navigate = useNavigate()
     const dispatch = useDispatch()
+    const location = useLocation()
     // 使用子组件方法
     const childRef = useRef(null)
-    // 一级分类
-    const oneRef = useRef(null)
+    // 用于存储的ref
+    const storageRef = useRef(null)
     const history = createHashHistory({ window })
     // 用于存储显示的图片的数组
     const [fileList, setFileList] = useState([]);
+    // 判断是修改还是新增 新增为false, 修改为true
+    const [addOrUpdate, setAddOrUpdate] = useState(true)
+    // 修改的默认值
+    const [defaultVal, setDefaultVal] = useState(location.state || {})
     // 获取分类列表
     const categoryList = useSelector(state => state.category.categoryList)
     const categoryListTwo = useSelector(state => state.category.categoryListTwo)
 
     useEffect(() => {
+        update()
         getCategory()
     }, [])
+    // 修改
+    const update = () => {
+        const state = location.state === null ? false : location.state
+        storageRef.state = state
+        setAddOrUpdate(state === false ? false : true)
+        if (storageRef.state && storageRef.state.imgs.length > 0) {
+            let baseUrl = 'http://localhost:5000/upload/'
+            let imgs = storageRef.state.imgs.map((item, index) => {
+                return {
+                    uid: -index,
+                    name: item,
+                    status: 'done',
+                    url: baseUrl + item
+                }
+            })
+            // 获取二级分类
+            dispatch(getCategoryTwoAC({ parentId: storageRef.state.pCategoryId }))
+            // 修改fileList
+            setFileList(imgs)
+        }
+    }
     // 获取一级分类
-    const handleChange = () => {
-        
-        const value = oneRef.current.value
-        console.log('value', value);
+    const handleChange = (value) => {
         getCategory(value)
-
     };
     // 获取分类列表
     const getCategory = (val) => {
@@ -92,10 +117,28 @@ export default function index() {
         imgWindow?.document.write(image.outerHTML);
     };
     // 表单提交成功
-    const onFinish = (values) => {
-        console.log('child', childRef.current.getHtml());
+    const onFinish = async (values) => {
+        const detail = childRef.current.getHtml()
+        values.detail = detail
         values.imgs = getImages()
-        console.log('Success:', values);
+        if (addOrUpdate) {  //新增数据
+            values._id = storageRef.state._id
+            const data = await dispatch(updateProductAC(values))
+            if (!data.status) {
+                message.success('修改成功')
+                navigate('/index/product')
+            } else {
+                message.error(data.msg)
+            }
+        } else {    //修改数据
+            const data = await dispatch(addProductAC(values))
+            if (!data.status) {
+                message.success('新增成功')
+            } else {
+                message.error(data.msg)
+            }
+        }
+
     };
     // 表单提交失败
     const onFinishFailed = (errorInfo) => {
@@ -104,6 +147,7 @@ export default function index() {
     return (
         <Card title={<><ArrowLeftOutlined onClick={goPrev} style={{ color: '#109477' }} /><span style={{ marginLeft: '10px' }}>商品详情</span></>}>
             <Form
+                initialValues={defaultVal}
                 name="basic"
                 labelCol={{
                     span: 2,
@@ -111,12 +155,8 @@ export default function index() {
                 wrapperCol={{
                     span: 8,
                 }}
-                initialValues={{
-                    remember: true,
-                }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
-                autoComplete="off"
             >
                 <Form.Item
                     label="商品名称:"
@@ -163,34 +203,37 @@ export default function index() {
                         },
                     ]}
                 >
-                    <select ref={oneRef} style={{width: '100%', border: '1px solid #d9d9d9', height: '32px', padding: '0px 10px'}} name="" id="" onBlue={handleChange}>
+                    <Select
+                        onChange={handleChange}
+                    >
                         {
-                           categoryList.length> 1 && categoryList.map(item => {
-                                return <option key={item._id} value={item._id}>{item.name}</option>
+                            categoryList.map(item => {
+                                return <Option key={item._id} value={item._id}>{item.name}</Option>
                             })
                         }
-                    </select>
+                    </Select>
                 </Form.Item>
-                {
-                    categoryListTwo.length > 1 && <Form.Item
-                        label="商品二级种类:"
-                        name="pCategoryId"
-                        rules={[
-                            {
-                                required: true,
-                                message: '请选择商品二级种类!',
-                            },
-                        ]}
+                <Form.Item
+                    initialValues={defaultVal.categoryId}
+                    label="商品二级种类:"
+                    name="categoryId"
+                    rules={[
+                        {
+                            required: true,
+                            message: '请选择商品二级种类!',
+                        },
+                    ]}
+                >
+                    <Select
                     >
-                        <select style={{width: '100%', border: '1px solid #d9d9d9', height: '32px', padding: '0px 10px'}} name="" id="">
-                            {
-                                categoryListTwo.map(item => {
-                                    return <option key={item._id} value={item._id}>{item.name}</option>
-                                })
-                            }
-                        </select>
-                    </Form.Item>
-                }
+                        {
+                            categoryListTwo.map(item => {
+                                return <Option key={item._id} value={item._id}>{item.name}</Option>
+                            })
+                        }
+                    </Select>
+                </Form.Item>
+
 
                 <Form.Item label="商品图片" valuePropName="fileList">
                     <ImgCrop rotate>
@@ -217,7 +260,7 @@ export default function index() {
                     label="商品描述:"
                     name="detail"
                 >
-                    <RichTextEditor ref={childRef} />
+                    <RichTextEditor detail={defaultVal.detail} ref={childRef} />
                 </Form.Item>
                 <Form.Item
                     wrapperCol={{
